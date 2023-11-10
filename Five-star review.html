@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>homework_03</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let pic = document.images;
+            let piclen = pic.length;
+            for (let i = 0; i < piclen; i++) {
+                pic[i].addEventListener("mouseout", mouseout);
+                pic[i].addEventListener("mouseover", mouseover);
+                pic[i].addEventListener("click", Click);
+                pic[i].addEventListener("dblclick", clean);
+            }
+            document.getElementById("clean").addEventListener("click", clean);
+        });
+
+        function mouseover() {
+            let pic = document.images;
+            for (let i = 0; i < this.id.substr(5); i++) {
+                pic[i].src = "Images/chngstar.gif";
+                document.getElementById("score").innerHTML = `目前評分${i + 1}顆星`;
+            }
+        }
+
+        function mouseout() {
+            let pic = document.images;
+            for (let i = 0; i < this.id.substr(5); i++) {
+                pic[i].src = "Images/star.gif";
+                document.getElementById("score").innerHTML = "";
+            }
+        }
+
+        function Click() {
+            let pic = document.images;
+            for (let i = 0; i < this.id.substr(5); i++) {
+                pic[i].src = "Images/chngstar.gif";
+                document.getElementById("score").innerHTML = `給予${i + 1}顆星`;
+            }
+            let piclen = pic.length;
+            for (let i = 0; i < piclen; i++) {
+                pic[i].removeEventListener("mouseout", mouseout);
+                pic[i].removeEventListener("mouseover", mouseover);
+                pic[i].removeEventListener("click", Click);
+            }
+        }
+
+        function clean() {
+            let pic = document.images;
+            let piclen = pic.length;
+            document.getElementById("score").innerHTML = "";
+            for (let i = 0; i < piclen; i++) {
+                pic[i].src = "Images/star.gif";
+                pic[i].addEventListener("mouseout", mouseout);
+                pic[i].addEventListener("mouseover", mouseover);
+                pic[i].addEventListener("click", Click);
+            }
+            document.getElementById("clean").addEventListener("click", clean);
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <img id="image1" src="Images/star.gif" />
+        <img id="image2" src="Images/star.gif" />
+        <img id="image3" src="Images/star.gif" />
+        <img id="image4" src="Images/star.gif" />
+        <img id="image5" src="Images/star.gif" />
+    </div>
+    <div>
+        <small style="font-style: oblique;">單擊星星可進行評分，點兩下可重置星星</small><br>
+        <input type="button" value="重新評分" id="clean" />
+        <span id="score"></span>
+    </div>
+</body>
+
+</html>

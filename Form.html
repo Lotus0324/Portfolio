@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Form</title>
+
+</head>
+<style>
+    .centergo {
+        border: double rgb(111, 115, 194) 4px;
+        border-radius: 7px;
+        width: 600px;
+    }
+</style>
+
+<body>
+    <form>
+        <fieldset class="centergo">
+            <legend style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">Form Check</legend>
+            <div>
+                <label for="name1">
+                    姓名:
+                    <input type="text" id="name1" autocomplete="off" />
+                    <span id="spa1"></span>
+                </label>
+                <p class="p1">(1.不可以空白，2.至少兩個字以上，3.必須全部都為中文字)</p>
+                <hr style="border: 1.5px dashed rgb(208, 197, 197);">
+            </div>
+
+            <div>
+                <label for="pwd1">
+                    密碼:
+                    <input type="password" id="pwd1" autocomplete="off" />
+                    <span id="spa2"></span>
+                </label>
+                <p class="p1">(1.不可以空白，2.至少6個字且必須包含英文字母、數字、特殊字元[!@#$%^&*()_+])</p>
+                <hr style="border: 1.5px dashed rgb(208, 197, 197);">
+            </div>
+
+            <div>
+                <label for="date1">
+                    日期:
+                    <input type="text" id="date1" placeholder="ex:2000/2/29" />
+                    <span id="spa3"></span>
+                </label>
+                <p class="p1">格式:西元年/月/日 yyyy/MM/dd</p>
+                <hr style="border: 1.5px dashed rgb(208, 197, 197);">
+
+            </div>
+            <div style="text-align: center" center>
+                <button id="clean">全部清除</button>
+            </div>
+        </fieldset>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js%22%3E"></script>
+    <script src="https://kit.fontawesome.com/44b6341fdf.js" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById("name1").onblur = checkName;
+        document.getElementById("pwd1").onblur = checkPwd;
+        document.getElementById("date1").onblur = checkDate;
+        document.getElementById("clean").addEventListener("click", Clean);
+        function checkName() {
+            let flagn1 = false;
+            let name = document.getElementById("name1").value;
+            let spa = document.getElementById("spa1")
+            if (name == "") {
+                spa.innerHTML = '<i class="fas fa-user-times"></i>' + '<span class="error">請填寫資料</span>';
+            }
+            else if (name.length >= 2) {
+                for (let i = 0; i < name.length; i++) {
+                    let chr = name.charCodeAt(i);
+                    if (chr >= 0x4e00 && chr <= 0x9fff) {
+                        flagn1 = true;
+                        break;
+                    }
+                }
+                if (flagn1)
+                    spa.innerHTML = '<i class="fas fa-user-check"></i>' + "輸入格式正確";
+                else
+                    spa.innerHTML = '<i class="fas fa-user-times"></i>' + '<span class="error">請輸入中文字</span>';
+            } else {
+                spa.innerHTML = '<i class="fas fa-user-times"></i>' + '<span class="error">至少兩個字以上</span>';
+            }
+
+        }
+        function checkPwd() {
+            let Pwd = document.getElementById("pwd1");
+            let Pwdval = Pwd.value;
+            let spa2 = document.getElementById("spa2");
+            let pwdlen = Pwdval.length;
+            let flag1 = false;
+            let flag2 = false;
+            let flag3 = false;
+            let sp = new String("!@#$%^&*()_+");
+            if (Pwdval == "") {
+                spa2.innerHTML = '<i class="far fa-sad-cry"></i>' + '<span class="error">請填寫資料</span>';
+            }
+            else if (pwdlen >= 6) {
+                for (let i = 0; i < pwdlen; i++) {
+                    let ch = Pwdval.charAt(i).toUpperCase();
+                    if (ch >= "A" && ch <= "Z") {
+                        flag1 = true;
+                    } else if (ch >= 0 && ch <= 9) {
+                        flag2 = true;
+                    } else {
+                        for (let i = 0; i < sp.length; i++) {
+                            if (sp.charAt(i) == ch) {
+                                flag3 = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (flag1 && flag2 && flag3) {
+                        break;
+                    }
+                }
+                if (flag1 && flag2 && flag3) {
+                    spa2.innerHTML = '<i class="fa-regular fa-face-laugh-beam"></i>' + "輸入格式正確"
+                } else {
+                    spa2.innerHTML = '<i class="far fa-sad-cry"></i>' + '<span class="error">輸入格式錯誤</span>';
+                }
+            } else {
+                spa2.innerHTML = '<i class="far fa-sad-cry"></i>' + '<span class="error">至少六個字以上</span>';
+            }
+        }
+        function checkDate() {
+            let date = document.getElementById("date1");
+            let dateval = date.value;
+            let daylist = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            let spa3 = document.getElementById("spa3");
+            let indexOf = dateval.indexOf('/');
+            let arrD = dateval.split("/");
+            let y = parseInt(arrD[0], 10);
+            let m = parseInt(arrD[1], 10);
+            let d = parseInt(arrD[2], 10);
+            let flag5 = false;
+            if (dateval != "") {
+                if (indexOf != -1) {
+                    if (arrD.length == 3) {
+                        if (isNaN(y) || isNaN(m) || isNaN(d)) {
+                            spa3.innerHTML = '<img src="image/error.png" />' + '<span class="error">請用阿拉伯數字輸入正確日期</span>';
+                        } else if (m <= 12 && m >= 1) {
+                            if (checkLoopYear(y)) {
+                                //true 閏年
+                                daylist[2] = 29;
+                                flag5 = true;
+                            } else {
+                                flag5 = true;
+                            }
+                        } else {
+                            spa3.innerHTML = '<i class="fa-regular fa-calendar-xmark"></i>' + '<span class="error">請輸入正確月份</span>';
+                        }
+                    } else {
+                        spa3.innerHTML = '<i class="fa-regular fa-calendar-xmark"></i>' + '<span class="error">請輸入正確格式 yyyy/MM/dd</span>';
+                    }
+                } else {
+                    spa3.innerHTML = '<i class="fa-regular fa-calendar-xmark"></i>' + '<span class="error">請用"/"做為日期分隔</span>';
+                }
+            } else {
+                spa3.innerHTML = '<i class="fa-regular fa-calendar-xmark"></i>' + '<span class="error">請填寫資料</span>';
+            }
+
+            if (flag5) {
+                if (d > daylist[m]) {
+                    spa3.innerHTML = '<i class="fa-regular fa-calendar-xmark"></i>' + '<span class="error">請輸入正確日期</span>';
+                }
+                else {
+                    spa3.innerHTML = '<i class="fa-regular fa-calendar-check"></i>' + '格式正確';
+                }
+            }
+            function checkLoopYear(checkYear) {
+                return (new Date(checkYear, 1, 29).getDate() == 29);
+            }
+        }
+        function Clean() {
+            document.getElementById("spa1").innerHTML = "";
+            document.getElementById("spa2").innerHTML = "";
+            document.getElementById("spa3").innerHTML = "";
+            document.getElementById("name1").value = "";
+            document.getElementById("pwd1").value = "";
+            document.getElementById("date1").value = "";
+        }
+    </script>
+</body>
+
+</html>
